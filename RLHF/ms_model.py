@@ -23,10 +23,6 @@ Date: 2023/08/31
 """
 from typing import List
 
-# import torch
-# import torch.nn as nn
-# import torch.nn.functional as F
-
 import mindspore
 import mindspore.nn as nn
 import mindspore.ops as ops
