@@ -40,7 +40,7 @@ class RewardModel(nn.Cell):
         init func.
 
         Args:
-            encoder (mindnlp.models): backbone, 默认使用 ernie-base
+            encoder (mindnlp.models): backbone, 默认使用 bert
         """
         super().__init__()
         self.encoder = encoder
@@ -76,6 +76,19 @@ class RewardModel(nn.Cell):
         reward = self.reward_layer(pooler_output)       # (batch, 1)
         return reward
 
+
+class RankListLoss(nn.Cell):
+    '''自定义有序列表rank loss'''
+    
+    def __init__(self, auto_prefix=True, flags=None):
+        super().__init__(auto_prefix, flags)
+        
+        
+    def construct(self, base, target):
+        # 简要版本：转为有标签学习，标签是1表示绝绝子！表现为0表示正常语句
+        loss = (base - target).mean()
+        return loss
+    
 
 def compute_rank_list_loss(rank_rewards_list: List[List[mindspore.Tensor]], device='cpu') -> mindspore.Tensor:
     """
