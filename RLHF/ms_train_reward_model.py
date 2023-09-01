@@ -113,7 +113,10 @@ class JuejueziDataInterator:
             self._data_dict = json.load(f)
 
     def __getitem__(self, index):
-        return self._data_dict[index]["text"], self._data_dict[index]["score"]
+        text = self._data_dict[index]["text"]
+        score = self._data_dict[index]["score"]
+        # score = 1 if score > 0 else 0
+        return text, score
 
     def __len__(self):
         return len(self._data_dict)
@@ -146,9 +149,9 @@ def train():
     # tokenizer = AutoTokenizer.from_pretrained(args.model)
     
     # 准备模型
-    encoder = BertModel.from_pretrained('bert-base-chinese')
+    encoder = BertModel.from_pretrained('bert-large-cased')
     model = RewardModel(encoder)
-    tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
+    tokenizer = BertTokenizer.from_pretrained('bert-large-cased')
     pad_value = tokenizer.token_to_id('[PAD]')      # 根据模型获取pad_value
     
     # convert_func = partial(convert_example, tokenizer=tokenizer, max_seq_len=args.max_seq_len)
@@ -169,6 +172,7 @@ def train():
     optimizer = nn.Adam(model.trainable_params(), learning_rate=args.learning_rate)
     metric = Accuracy()
     loss_fn = nn.MAELoss()
+    # loss_fn = nn.CrossEntropyLoss()
     # model.to(args.device)
 
     # 根据训练轮数计算最大训练步数，以便于scheduler动态调整lr --> 时间问题，暂时不用lr scheduler了
@@ -181,8 +185,8 @@ def train():
     global_step, best_acc = 0, 0
     
     # define callbacks to save checkpoints
-    ckpoint_cb = CheckpointCallback(save_path='checkpoint', ckpt_name='juejuezi_reward_model', epochs=1, keep_checkpoint_max=2)
-    best_model_cb = BestModelCallback(save_path='checkpoint', auto_load=True)
+    ckpoint_cb = CheckpointCallback(save_path='checkpoint/large', ckpt_name='juejuezi_reward_model', epochs=1, keep_checkpoint_max=2)
+    best_model_cb = BestModelCallback(save_path='checkpoint/large', auto_load=True)
     
     # 使用mindnlp.Trainer封装训练过程
     epochs = args.num_train_epochs

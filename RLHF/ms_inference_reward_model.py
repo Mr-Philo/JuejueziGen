@@ -29,10 +29,10 @@ from mindnlp.models import BertModel
 from ms_model import RewardModel
 import numpy as np
 
-encoder = BertModel.from_pretrained('bert-base-chinese')
-tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
+encoder = BertModel.from_pretrained('bert-large-cased')
+tokenizer = BertTokenizer.from_pretrained('bert-large-cased')
 model = RewardModel(encoder)
-param_dict = mindspore.load_checkpoint('./checkpoint/best_so_far.ckpt')
+param_dict = mindspore.load_checkpoint('./checkpoint/large/juejuezi_reward_model_epoch_0.ckpt')
 # param_dict = mindspore.load_checkpoint('./checkpoint/juejuezi_reward_model_epoch_9.ckpt')
 param_not_load, _ = mindspore.load_param_into_net(model, param_dict)
 # model.eval()
@@ -48,4 +48,4 @@ texts = [
 for text in texts:
     inputs = tokenizer(np.array(text)).reshape(1, -1)
     r = model(mindspore.Tensor(inputs))
-    print(r)
+    print(f"{r}: {text}")

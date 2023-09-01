@@ -40,7 +40,7 @@ class RewardModel(nn.Cell):
         """
         super().__init__()
         self.encoder = encoder
-        self.reward_layer = nn.Dense(768, 1)
+        self.reward_layer = nn.Dense(1024, 1)
 
     def construct(
         self,
